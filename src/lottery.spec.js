@@ -1,45 +1,32 @@
-const randomNumber = jest.fn(() => Math.floor(Math.random() * 49) + 1  )
-const drawLottery = jest.fn((lotteryNumbers) => {
-  while(lotteryNumbers.length < 6) {
-    let currentNumber = randomNumber()
-    if(!lotteryNumbers.includes(currentNumber)) {
-      lotteryNumbers.push(currentNumber)
-    }
-  }
-})
-const sortAscending = jest.fn(arr => arr.sort((a,b)=>a-b))
-const isInteger = value => Number.isInteger(value)
+const lottery = require("./lottery")
 
-describe("lottery", () => {
-  let lotteryNumbers = []
-  beforeEach( () => {
-    drawLottery(lotteryNumbers)
-    sortAscending(lotteryNumbers)
+describe("Lottery", () => {
+  beforeEach(() => {
+    jest.restoreAllMocks()
   })
-  it("Check there is 6 Numbers", () => {
-    expect(lotteryNumbers.length).toBe(6)
+
+  it("Draw random ball is an integer", () => {
+    expect(Number.isInteger(lottery.drawRandomBall())).toBe(true)
   })
-  it("Check is numeric", () => {
-    for(let i = 0; i< lotteryNumbers.length; i++) {
-      expect(isInteger(2)).toBe(true)
-    }
+
+  it("Check Min and Max ball", () => {
+    const mathRandomSpy = jest.spyOn(Math, 'random')
+    mathRandomSpy.mockImplementation(() => 0)
+    expect(lottery.drawRandomBall()).toBe(lottery.MIN_NUMBER)
+    mathRandomSpy.mockImplementation(() => 1)
+    expect(lottery.drawRandomBall()).toBe(lottery.MAX_NUMBER)
   })
-  it("Check ascending order and unique numbers", () => {
-      for(let i = 0; i< lotteryNumbers.length; i++) {
-        if(i !== lotteryNumbers.length - 1) {
-          expect(lotteryNumbers[i]).toBeLessThan(lotteryNumbers[i+1])
-        }
-      }
+
+
+  it("Check is ascending order", () => {
+    const lotteryBalls = [38, 14, 26, 5, 48, 21]
+    expect(lottery.sortLotteryAscending(lotteryBalls)).toEqual([5, 14, 21, 26, 38, 48])
   })
-  it("Check min and max", () => {
-    expect(lotteryNumbers[0]).toBeGreaterThanOrEqual(0)
-    expect(lotteryNumbers[lotteryNumbers.length - 1]).toBeLessThanOrEqual(49)
-  })
+
 })
 
+// // Write a function that will return random numbers for a lottery
 
-// Write a function that will return random numbers for a lottery
+// // The lottery will draw 6 balls from a pool labelled 1 to 49
 
-// The lottery will draw 6 balls from a pool labelled 1 to 49
-
-// Your function should idsplay the selected balls in ascending order
+// // Your function should idsplay the selected balls in ascending order
